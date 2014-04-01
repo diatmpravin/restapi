@@ -3,7 +3,7 @@ package restapi
 import (
 	"fmt"
 	"log"
-	// "net/http"
+	"net/http"
 	"net/url"
 )
 
@@ -24,7 +24,13 @@ func (r *Rest) Get(r_url string) string {
 	fmt.Println("----In restapi Get----")
 
 	uri := parse_url(r_url)
-	fmt.Printf("%#v", uri)
+	urlStr := fmt.Sprintf("%v", uri)
+	rq, _ := http.NewRequest("GET", urlStr, nil)
+	rq.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, _ := client.Do(rq)
+	fmt.Println(resp.Status)
 
 	return "true"
 }
