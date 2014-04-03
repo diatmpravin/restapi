@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,8 +30,21 @@ func (r *Rest) Get(r_url string) string {
 	rq.Header.Add("Content-Type", "application/json")
 
 	client := &http.Client{}
-	resp, _ := client.Do(rq)
-	fmt.Println(resp.Status)
+	resp, err := client.Do(rq)
+	defer resp.Body.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		body := &bytes.Buffer{}
+		_, err := body.ReadFrom(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(resp.StatusCode)
+		fmt.Println(resp.Header)
+		fmt.Println(body)
+	}
 
 	return "true"
 }
